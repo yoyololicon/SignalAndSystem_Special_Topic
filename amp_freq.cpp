@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     while(!infile.eof()){
 
         infile >> time >> sample;
-        if(up_c == 200){
+        if(up_c == 300){
             if(sample > max){
                 max = sample;
                 r_time = time;
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
         if(sample < pre_sample && up_c > 0){
             up_c--;
         }
-        else if(sample > pre_sample && up_c < 200){
+        else if(sample > pre_sample && up_c < 300){
             up_c++;
         }
 

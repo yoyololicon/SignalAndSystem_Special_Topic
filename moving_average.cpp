@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <deque>
-#include <cmath>
 #include <iomanip>
+#include <stdlib.h>
 using namespace std;
 #define smprate 1000
 
@@ -11,12 +11,14 @@ int main(int argc, char** argv)
     fstream infile, outfile;
     deque<double> mask;
 
-    if(argc != 3)
+    if(argc < 3){
+        cout << "usage: infile mask_size" << endl;
         return 1;
+    }
     double time, sample;
+    int mask_size = atoi(argv[2]);
 
     infile.open(argv[1], fstream::in);
-    outfile.open(argv[2], fstream::out);
     if(!infile.is_open()) {
         cerr << "error" << endl;
         return 1;
@@ -28,13 +30,13 @@ int main(int argc, char** argv)
         infile >> time >> sample;
         sum+=sample;
         mask.push_back(sample);
-        if(count < 500)
+        if(count < mask_size)
             count++;
         else{
             sum-=mask.front();
             mask.pop_front();
         }
-        outfile << time-0.25 << "\t"<< setprecision(6) << sum/count << endl;
+        cout << time-mask_size/2000 << "\t"<< setprecision(6) << sum/count << endl;
     }
 
     return 0;
