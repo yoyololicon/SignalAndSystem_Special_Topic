@@ -1,11 +1,11 @@
 #include <complex>
 #include <iostream>
+#include <vector>
 #include <fstream>
 #include <valarray>
-using namespace std;
 typedef std::complex<double> Complex;
 typedef std::valarray<Complex> CArray;
-#define FFT_size 2048
+using namespace std;
 
 // Cooley–Tukey FFT (in-place, divide-and-conquer)
 // Higher memory requirements and redundancy although more intuitive
@@ -34,10 +34,11 @@ void fft(CArray& x)
 int main(int argc, char **argv)
 {
     double time, interval;
+    int n = 1;
     fstream infile;
 
     if(argc < 2){
-        cout << "usage: infile" << endl;
+        cout << "usage: infile totaltime" << endl;
         return 1;
     }
 
@@ -48,16 +49,29 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    CArray data(FFT_size);
+    vector<double> rawdata;
 
-    for(int i = 0; i < FFT_size; i++){
+
+    while(infile){
         infile >> time >> interval;
-        data[i] = interval*pow(-1, i);
+        rawdata.push_back(interval);
+    }
+
+    while(n < rawdata.size())
+        n*=2;
+
+    CArray data(n);
+
+    for(int i = 0; i < n; i++){
+        if(i < rawdata.size())
+            data[i] = rawdata[i];
+        else
+            data[i] = 0;
     }
 
     fft(data);
-    for(int i = 0; i < FFT_size; i++){
-        cout << i << "\t" << log(abs(data[i])+1) << endl;
+    for(int i = 0; i < n; i++){
+        cout << i << "\t" << pow(abs(data[i]), 2) << endl;
     }
 
     return 0;
