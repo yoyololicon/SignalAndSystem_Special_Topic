@@ -83,9 +83,9 @@ int main(int argc, char **argv)
     for(int i = 0; i < n/2; i++){
         double hz = i*dfreq, power = pow(abs(data[i]), 2);
         if(hz > 0.04 && hz <= 0.15)
-            lf_power += power;
+            lf_power += power*dfreq;
         else if(hz > 0.15 && hz <= 0.4)
-            hf_power += power;
+            hf_power += power*dfreq;
         outfile << hz << "\t" << power << endl;
     }
 
