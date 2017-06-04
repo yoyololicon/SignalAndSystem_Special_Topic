@@ -35,10 +35,10 @@ int main(int argc, char **argv)
 {
     double time, interval;
     int n = 1;
-    fstream infile;
+    fstream infile, outfile;
 
-    if(argc < 2){
-        cout << "usage: infile totaltime" << endl;
+    if(argc < 3){
+        cout << "usage: infile.txt totaltime" << endl;
         return 1;
     }
 
@@ -49,8 +49,14 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    vector<double> rawdata;
+    string filename = string(argv[1]);
+    unsigned int pos = filename.find(".txt");
+    filename.insert(pos, "_psd");
+    outfile.open(filename.c_str(), fstream::out);
 
+    double totaltime = atof(argv[2]);
+
+    vector<double> rawdata;
 
     while(infile){
         infile >> time >> interval;
@@ -60,6 +66,8 @@ int main(int argc, char **argv)
     while(n < rawdata.size())
         n*=2;
 
+    totaltime *= n/rawdata.size();
+    double dfreq = 1/totaltime;
     CArray data(n);
 
     for(int i = 0; i < n; i++){
@@ -70,9 +78,18 @@ int main(int argc, char **argv)
     }
 
     fft(data);
-    for(int i = 0; i < n; i++){
-        cout << i << "\t" << pow(abs(data[i]), 2) << endl;
+
+    double lf_power = 0, hf_power = 0;
+    for(int i = 0; i < n/2; i++){
+        double hz = i*dfreq, power = pow(abs(data[i]), 2);
+        if(hz > 0.04 && hz <= 0.15)
+            lf_power += power;
+        else if(hz > 0.15 && hz <= 0.4)
+            hf_power += power;
+        outfile << hz << "\t" << power << endl;
     }
+
+    cout << "lf " << lf_power << "; hf " << hf_power << endl;
 
     return 0;
 }

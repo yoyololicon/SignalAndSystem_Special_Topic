@@ -8,12 +8,15 @@ using namespace std;
 int main(int argc, char** argv)
 {
     fstream infile;
+    double slope = 0.005, Max, r_time, confidence = 0, threshold = 0.55;
+    double time, sample, pre_sample=INFINITY;
 
     if(argc < 2){
-        cout << "usage: infile" << endl;
+        cout << "usage: infile [threshold]" << endl;
         return 1;
     }
-    double time, sample, pre_sample=INFINITY;
+    else if(argc == 3)
+        threshold = atof(argv[2]);
 
     infile.open(argv[1], fstream::in);
 
@@ -22,7 +25,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    double slope = 0.005, Max, r_time, confidence = 0, threshold = 0.55;
+
     bool QRS = false;
     vector<pair<double, double>> R;
 
