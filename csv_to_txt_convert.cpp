@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
     fstream infile, outfile;
     int h, m, s, sign;
 
-    if(argc != 3)
+    if(argc < 3)
         return 1;
     double time = 0.;
 
